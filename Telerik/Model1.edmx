@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="BarcodeDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Borrower">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BorrowerName" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemName" Type="varchar" MaxLength="50" />
+          <Property Name="ItemStatus" Type="varchar" MaxLength="50" />
+          <Property Name="ItemTypeId" Type="int" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="ItemType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemTypeName" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="TblTransaction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="BorrowerId" Type="int" />
+          <Property Name="ItemId" Type="int" />
+          <Property Name="ItemBorrowingDate" Type="date" />
+          <Property Name="ItemReturningDate" Type="date" />
+          <Property Name="TotalPrice" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <Association Name="FK_Item_Itemtype">
+          <End Role="ItemType" Type="Self.ItemType" Multiplicity="0..1" />
+          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ItemType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Item">
+              <PropertyRef Name="ItemTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transaction_BorrowerID">
+          <End Role="Borrower" Type="Self.Borrower" Multiplicity="0..1" />
+          <End Role="TblTransaction" Type="Self.TblTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Borrower">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TblTransaction">
+              <PropertyRef Name="BorrowerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transaction_ItemID">
+          <End Role="Item" Type="Self.Item" Multiplicity="0..1" />
+          <End Role="TblTransaction" Type="Self.TblTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TblTransaction">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BarcodeDBModelStoreContainer">
+          <EntitySet Name="Borrower" EntityType="Self.Borrower" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Item" EntityType="Self.Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ItemType" EntityType="Self.ItemType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TblTransaction" EntityType="Self.TblTransaction" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Item_Itemtype" Association="Self.FK_Item_Itemtype">
+            <End Role="ItemType" EntitySet="ItemType" />
+            <End Role="Item" EntitySet="Item" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transaction_BorrowerID" Association="Self.FK_Transaction_BorrowerID">
+            <End Role="Borrower" EntitySet="Borrower" />
+            <End Role="TblTransaction" EntitySet="TblTransaction" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transaction_ItemID" Association="Self.FK_Transaction_ItemID">
+            <End Role="Item" EntitySet="Item" />
+            <End Role="TblTransaction" EntitySet="TblTransaction" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="BarcodeDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Borrower">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BorrowerName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="TblTransactions" Relationship="Self.FK_Transaction_BorrowerID" FromRole="Borrower" ToRole="TblTransaction" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemTypeId" Type="Int32" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="ItemType" Relationship="Self.FK_Item_Itemtype" FromRole="Item" ToRole="ItemType" />
+          <NavigationProperty Name="TblTransactions" Relationship="Self.FK_Transaction_ItemID" FromRole="Item" ToRole="TblTransaction" />
+        </EntityType>
+        <EntityType Name="ItemType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemTypeName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Items" Relationship="Self.FK_Item_Itemtype" FromRole="ItemType" ToRole="Item" />
+        </EntityType>
+        <EntityType Name="TblTransaction">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BorrowerId" Type="Int32" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="ItemBorrowingDate" Type="DateTime" Precision="0" />
+          <Property Name="ItemReturningDate" Type="DateTime" Precision="0" />
+          <Property Name="TotalPrice" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="Borrower" Relationship="Self.FK_Transaction_BorrowerID" FromRole="TblTransaction" ToRole="Borrower" />
+          <NavigationProperty Name="Item" Relationship="Self.FK_Transaction_ItemID" FromRole="TblTransaction" ToRole="Item" />
+        </EntityType>
+        <Association Name="FK_Transaction_BorrowerID">
+          <End Role="Borrower" Type="Self.Borrower" Multiplicity="0..1" />
+          <End Role="TblTransaction" Type="Self.TblTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Borrower">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TblTransaction">
+              <PropertyRef Name="BorrowerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Item_Itemtype">
+          <End Role="ItemType" Type="Self.ItemType" Multiplicity="0..1" />
+          <End Role="Item" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ItemType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Item">
+              <PropertyRef Name="ItemTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Transaction_ItemID">
+          <End Role="Item" Type="Self.Item" Multiplicity="0..1" />
+          <End Role="TblTransaction" Type="Self.TblTransaction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Item">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TblTransaction">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="BarcodeDBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Borrowers" EntityType="Self.Borrower" />
+          <EntitySet Name="Items" EntityType="Self.Item" />
+          <EntitySet Name="ItemTypes" EntityType="Self.ItemType" />
+          <EntitySet Name="TblTransactions" EntityType="Self.TblTransaction" />
+          <AssociationSet Name="FK_Transaction_BorrowerID" Association="Self.FK_Transaction_BorrowerID">
+            <End Role="Borrower" EntitySet="Borrowers" />
+            <End Role="TblTransaction" EntitySet="TblTransactions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Item_Itemtype" Association="Self.FK_Item_Itemtype">
+            <End Role="ItemType" EntitySet="ItemTypes" />
+            <End Role="Item" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Transaction_ItemID" Association="Self.FK_Transaction_ItemID">
+            <End Role="Item" EntitySet="Items" />
+            <End Role="TblTransaction" EntitySet="TblTransactions" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="BarcodeDBModelStoreContainer" CdmEntityContainer="BarcodeDBEntities1">
+          <EntitySetMapping Name="Borrowers">
+            <EntityTypeMapping TypeName="BarcodeDBModel.Borrower">
+              <MappingFragment StoreEntitySet="Borrower">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="BorrowerName" ColumnName="BorrowerName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="BarcodeDBModel.Item">
+              <MappingFragment StoreEntitySet="Item">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="ItemStatus" ColumnName="ItemStatus" />
+                <ScalarProperty Name="ItemTypeId" ColumnName="ItemTypeId" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ItemTypes">
+            <EntityTypeMapping TypeName="BarcodeDBModel.ItemType">
+              <MappingFragment StoreEntitySet="ItemType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ItemTypeName" ColumnName="ItemTypeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TblTransactions">
+            <EntityTypeMapping TypeName="BarcodeDBModel.TblTransaction">
+              <MappingFragment StoreEntitySet="TblTransaction">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="BorrowerId" ColumnName="BorrowerId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="ItemBorrowingDate" ColumnName="ItemBorrowingDate" />
+                <ScalarProperty Name="ItemReturningDate" ColumnName="ItemReturningDate" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
